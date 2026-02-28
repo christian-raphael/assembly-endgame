@@ -9,6 +9,10 @@ export default function AssemblyEndgame() {
     const wrongGuessCount = 
         guessedLetters.filter(letter => !currentWord.includes(letter)).length
 
+    const isGameWon = currentWord.split("").every(letter => guessedLetters.includes(letter));
+    const isGameLost = wrongGuessCount >= languages.length - 1;
+    const isGameOver = isGameWon || isGameLost;
+
     const alphabet = "abcdefghijklmnopqrstuvwxyz"
 
     function addGuessedLetter(letter) {
@@ -63,6 +67,11 @@ export default function AssemblyEndgame() {
         )
     })
 
+    const gameStatusClass = clsx("game-status", {
+        won: isGameWon, 
+        lost: isGameLost
+    })
+
     return (
         <main>
             <header>
@@ -70,9 +79,25 @@ export default function AssemblyEndgame() {
                 <p>Guess the word within 8 attempts to keep the
                 programming world safe from Assembly!</p>
             </header>
-            <section className="game-status">
-                <h2>You win!</h2>
-                <p>Well done! 🎉</p>
+            <section className={gameStatusClass}>
+                {
+                    isGameOver ? 
+                    (
+                        isGameWon ? (
+                            <>
+                                <h2>You win!</h2>
+                                <p>Well done! 🎉</p>
+                            </>
+                        ) : (
+                            <>
+                                <h2>Game Over!</h2>
+                                <p>You lose! Better start learning Assembly 😭</p>
+                            </>
+                        )
+                    ) : (
+                        null
+                    )
+                }
             </section>
             <section className="language-chips">
                 {languageElements}
@@ -83,7 +108,7 @@ export default function AssemblyEndgame() {
             <section className="keyboard">
                 {keyboardElements}
             </section>
-            <button className="new-game">New Game</button>
+            {isGameOver && <button className="new-game">New Game</button>}
         </main>
     )
 }
